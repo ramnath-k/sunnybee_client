@@ -1,0 +1,55 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="{% static 'tag_metrics/table_style.css' %}">
+    <title>Tag Flow</title>
+</head>
+<body>
+    <div class="reportduration">From {{ start_date }} to {{ end_date }}</div>
+    <div class="datagrid">
+    <table>
+        <thead>
+        <tr>
+            <th>Store</th>
+            <th>Inflow</th>
+            <th>Outflow</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for tag in tags %}
+        <tr {% if forloop.counter|divisibleby:2 %}class="alt"{% endif %}>
+            <td>{{ tag.store }}</td>
+            <td>{{ tag.in_flow }}</td>
+            <td>{{ tag.out_flow }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+        <!--tfoot>
+            <tr>
+                <td colspan="4">
+                    <div id="paging">
+                        <ul>
+                            <li><a href="#"><span>Previous</span></a>
+                            </li>
+                            <li><a href="#" class="active"><span>1</span></a>
+                            </li>
+                            <li><a href="#"><span>2</span></a>
+                            </li>
+                            <li><a href="#"><span>3</span></a>
+                            </li>
+                            <li><a href="#"><span>4</span></a>
+                            </li>
+                            <li><a href="#"><span>5</span></a>
+                            </li>
+                            <li><a href="#"><span>Next</span></a>
+                            </li>
+                        </ul>
+                    </div>
+            </tr>
+        </tfoot-->
+    </table>
+</div>
+</body>
+</html>

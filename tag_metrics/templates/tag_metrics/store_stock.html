@@ -1,0 +1,29 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="{% static 'tag_metrics/table_style.css' %}">
+    <title>Tag Metrics</title>
+</head>
+<body>
+    <div class="datagrid">
+    <table>
+        <thead>
+        <tr>
+            <th>Store</th>
+            <th>Stock</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for tag in tags %}
+        <tr {% if forloop.counter|divisibleby:2 %}class="alt"{% endif %}>
+            <td>{{ tag.store }}</td>
+            <td>{{ tag.stock }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
