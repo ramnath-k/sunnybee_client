@@ -1,7 +1,8 @@
 # sunnybee_client
-Python Django client to visualize Sunnybee's tag tracker data
+## Python Django client to visualize Sunnybee's tag tracker data
 
-Installation:
+
+#### Installation
 1. Install Python 3.4.4 (not the latest 3.5) using the windows installer at https://www.python.org/downloads/ 
 1. Ensure to add Python to PATH (There is a check box in the installer)
 1. Install MySQL 5.7 for windows. 
