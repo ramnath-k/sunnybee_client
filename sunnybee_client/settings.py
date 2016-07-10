@@ -126,3 +126,5 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
+VALID_TOKENS = os.environ['SUNNYBEE_VALID_TOKENS'].split()
+

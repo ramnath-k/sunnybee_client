@@ -1,7 +1,46 @@
 from django.shortcuts import render
 from django.http import JsonResponse, HttpResponseNotAllowed, Http404, HttpResponse
+from django.utils.dateparse import parse_datetime
+from django.views.decorators.csrf import csrf_exempt
+from django.conf import settings
 from .models import TagTracker
 import datetime
+import json
+
+@csrf_exempt
+def update_tag_location(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+        except (ValueError, TypeError) as e:
+            msg = 'unable to parse request body as json'
+            result = {'error': {'error_code': 500, 'error_message': msg}}
+            return JsonResponse(result, status=500)
+        try:
+            token = data['token']
+            valid_token = token and token[:6] == 'Token ' and token[6:] in settings.VALID_TOKENS
+        except KeyError:
+            valid_token = False
+        if not valid_token:
+            return JsonResponse({'error': {'error_code': 401, 'error_message': 'Unauthorized'}}, status=401)
+        try:
+            tag_id = data['tag_id']
+            antenna = data['antenna']
+            reader = data['reader']
+            found_time = data['found_time']
+            found_time = parse_datetime(found_time)
+            if not found_time:
+                msg = 'unable to parse found_time as timezone aware datetime object'
+                result = {'error': {'error_code': 500, 'error_message': msg}}
+                return JsonResponse(result, status=500)
+            TagTracker.objects.update_tag_location(tag_id, antenna, reader, found_time)
+            result = {'ok': True}
+            return JsonResponse(result, status=200)
+        except KeyError:
+            msg = 'Unable to parse tag_id, antenna, reader, or found_time from request body'
+            result = {'error': {'error_code': 500, 'error_message': msg}}
+            return JsonResponse(result, status=500)
+    return HttpResponseNotAllowed(['POST'])
 
 def store_stock(request):
     if request.method == 'GET':

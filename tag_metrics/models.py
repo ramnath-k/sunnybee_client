@@ -1,19 +1,58 @@
 from django.db import models, connection
 from django.utils import timezone
 from .db_utils import execute_raw_query
+from datetime import timedelta
+WAIT_TIME = timedelta(seconds=20, minutes=0)
 
 class TagTrackerManager(models.Manager):
-    def create_tag_tracker(self, tag_id, antenna, reader, status):
-        tag_tracker = self.model(
-            tag_id=tag_id,
-            antenna=antenna,
-            reader=reader,
-            status=status,
-            created_time=timezone.now(),
-            updated_time=timezone.now()
-        )
-        tag_tracker.save()
-        return tag_tracker
+    def update_tag_location(self, tag_id, antenna, reader, found_time):
+      tags = self.raw(
+          """
+          select t.* from tag_metrics_tagtracker t
+          where t.tag_id=%(tag_id)s
+          order by t.id desc limit 1;
+          """
+          , {'tag_id': tag_id}
+      )
+      tags = list(tags)
+      if tags:
+        prev_tag = tags[0]
+        same_location = reader == prev_tag.reader
+        if same_location:
+          time_diff = found_time - prev_tag.updated_time
+          print time_diff
+          if time_diff > WAIT_TIME:
+            print 'Toggling status in same reader'
+            self.create_tag_tracker(tag_id, antenna, reader, 
+                1 - prev_tag.status, found_time, found_time)
+          else:
+            print 'Updating time in same reader'
+            prev_tag.updated_time = found_time
+            prev_tag.save()
+        else:
+            print 'Creating record for new reader for existing tag'
+            self.create_tag_tracker(tag_id, antenna, reader, 
+                self.model.STATUS_IN, found_time, found_time)
+      else:
+            print 'Creating record for new reader for new tag'
+            self.create_tag_tracker(tag_id, antenna, reader, 
+                self.model.STATUS_IN, found_time, found_time)
+
+    def create_tag_tracker(self, tag_id, antenna, reader, status, created_time=None, updated_time=None):
+      if not created_time:
+        created_time = timezone.now()
+      if not updated_time:
+        updated_time = timezone.now()
+      tag_tracker = self.model(
+          tag_id=tag_id,
+          antenna=antenna,
+          reader=reader,
+          status=status,
+          created_time=created_time,
+          updated_time=updated_time
+      )
+      tag_tracker.save()
+      return tag_tracker
 
     def last_locations(self):
         tags = self.raw(
@@ -72,6 +111,9 @@ class TagTracker(models.Model):
     created_time = models.DateTimeField(null=False)
     updated_time = models.DateTimeField(null=False)
     objects = TagTrackerManager()
+
+    STATUS_OUT = 0
+    STATUS_IN = 1
 
     def __str__(self):
         return str(self.__dict__)

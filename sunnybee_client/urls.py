@@ -24,4 +24,5 @@ urlpatterns = [
     url(r'^tag_location/$', tag_metrics_views.tag_location),
     url(r'^tag_flow_today/$', tag_metrics_views.tag_flow_today),
     url(r'^tag_flow_week/$', tag_metrics_views.tag_flow_week),
+    url(r'^update_tag_location/$', tag_metrics_views.update_tag_location),
 ]
