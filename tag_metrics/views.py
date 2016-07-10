@@ -61,7 +61,7 @@ def tag_flow_today(request):
         end_date = datetime.datetime.combine(today, datetime.time.max)
         start_date = start_date.strftime('%Y-%m-%d %H:%M:%S')
         end_date = end_date.strftime('%Y-%m-%d %H:%M:%S')
-        print(start_date, end_date)
+        # print(start_date, end_date)
         tags = TagTracker.objects.tag_flow(start_date, end_date)
         return render(request,
                       'tag_metrics/tag_flow.html',
@@ -81,7 +81,7 @@ def tag_flow_week(request):
         end_date = datetime.datetime.combine(end_date, datetime.time.max)
         start_date = start_date.strftime('%Y-%m-%d %H:%M:%S')
         end_date = end_date.strftime('%Y-%m-%d %H:%M:%S')
-        print(start_date, end_date)
+        # print(start_date, end_date)
         tags = TagTracker.objects.tag_flow(start_date, end_date)
         return render(request,
                       'tag_metrics/tag_flow.html',

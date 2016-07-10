@@ -20,21 +20,20 @@ class TagTrackerManager(models.Manager):
         same_location = reader == prev_tag.reader
         if same_location:
           time_diff = found_time - prev_tag.updated_time
-          print time_diff
           if time_diff > WAIT_TIME:
-            print 'Toggling status in same reader'
+            # print 'Toggling status in same reader'
             self.create_tag_tracker(tag_id, antenna, reader, 
                 1 - prev_tag.status, found_time, found_time)
           else:
-            print 'Updating time in same reader'
+            # print 'Updating time in same reader'
             prev_tag.updated_time = found_time
             prev_tag.save()
         else:
-            print 'Creating record for new reader for existing tag'
+            # print 'Creating record for new reader for existing tag'
             self.create_tag_tracker(tag_id, antenna, reader, 
                 self.model.STATUS_IN, found_time, found_time)
       else:
-            print 'Creating record for new reader for new tag'
+            # print 'Creating record for new reader for new tag'
             self.create_tag_tracker(tag_id, antenna, reader, 
                 self.model.STATUS_IN, found_time, found_time)
 
