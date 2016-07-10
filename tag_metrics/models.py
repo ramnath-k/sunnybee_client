@@ -74,6 +74,7 @@ class TagTrackerManager(models.Manager):
             where t.id in (
                 select max(t1.id) from tag_metrics_tagtracker t1 group by tag_id
             )
+            and t.status = 1
             and s.status = 1
             group by s.store
             order by s.store;
