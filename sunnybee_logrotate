@@ -1,0 +1,10 @@
+<INSERT PATH TO LOGS>/*.log {
+  daily
+  rotate 7
+  compress
+  delaycompress
+  missingok
+  create 644 ubuntu ubuntu
+  copytruncate
+}
+

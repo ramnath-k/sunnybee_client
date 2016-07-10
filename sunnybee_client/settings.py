@@ -23,9 +23,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'k8i-=(+1^%bt&0(zakkgx=6dh0@wj@mp#^h^=m-2$jj2dko_&q'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = bool(os.environ.get('SUNNYBEE_DEBUG', False))
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.environ['SUNNYBEE_ALLOWED_HOSTS'].split()
 
 
 # Application definition
@@ -77,13 +77,12 @@ WSGI_APPLICATION = 'sunnybee_client.wsgi.application'
 
 DATABASES = {
     'default': {
-        'NAME': 'sunnybee',
-        'ENGINE': 'mysql.connector.django',
-        'USER': 'sunnybee',
-        'PASSWORD': 'sqlsunny',
-        'OPTIONS': {
-          'autocommit': True,
-        },
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': os.environ['SUNNYBEE_DB_NAME'],
+        'HOST': os.environ['SUNNYBEE_DB_HOST'],
+        'PORT': os.environ['SUNNYBEE_DB_PORT'],
+        'USER': os.environ['SUNNYBEE_DB_USER'],
+        'PASSWORD': os.environ['SUNNYBEE_DB_PASSWORD'],
     }
 }
 
@@ -125,3 +124,5 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
