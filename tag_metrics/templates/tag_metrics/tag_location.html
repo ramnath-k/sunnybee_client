@@ -12,6 +12,7 @@
         <thead>
         <tr>
             <th>Store</th>
+            <th>Crate</th>
             <th>Tag Id</th>
         </tr>
         </thead>
@@ -19,6 +20,7 @@
         {% for tag in tags %}
         <tr {% if forloop.counter|divisibleby:2 %}class="alt"{% endif %}>
             <td>{{ tag.store }}</td>
+            <td>{{ tag.crate }}</td>
             <td>{{ tag.tag_id }}</td>
         </tr>
         {% endfor %}

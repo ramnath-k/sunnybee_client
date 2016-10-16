@@ -56,7 +56,8 @@ class TagTrackerManager(models.Manager):
     def last_locations(self):
         tags = self.raw(
             """
-            select t.*, s.store from tag_metrics_tagtracker t
+            select t.*, s.store, c.crate from tag_metrics_tagtracker t
+            inner join tag_metrics_crate c on c.tag_id = t.tag_id
             inner join tag_metrics_storereader s on s.reader = t.reader
             where t.id in (
                 select max(t1.id) from tag_metrics_tagtracker t1 group by tag_id
