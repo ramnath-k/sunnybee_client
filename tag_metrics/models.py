@@ -116,7 +116,7 @@ class TagTracker(models.Model):
     STATUS_IN = 1
 
     def __str__(self):
-        return str(self.__dict__)
+        return self.tag_id
 
 class StoreReader(models.Model):
     store = models.CharField(max_length=1024, null=False)
@@ -126,5 +126,32 @@ class StoreReader(models.Model):
     updated_time = models.DateTimeField(null=False)
 
     def __str__(self):
-        return str(self.__dict__)
+        return self.store
+
+class CrateManager(models.Manager):
+    def map_tag_id_to_crate(self, crate, tag_id, status, created_time=None, updated_time=None):
+      if not created_time:
+        created_time = timezone.now()
+      if not updated_time:
+        updated_time = timezone.now()
+      crate_model = self.model(
+          crate=crate,
+          tag_id=tag_id,
+          status=status,
+          created_time=created_time,
+          updated_time=updated_time
+      )
+      crate_model.save()
+      return crate_model
+
+class Crate(models.Model):
+    crate = models.CharField(max_length=1024, null=False)
+    tag_id = models.CharField(max_length=1024, null=False)
+    status = models.IntegerField(null=False)
+    created_time = models.DateTimeField(null=False)
+    updated_time = models.DateTimeField(null=False)
+    objects = CrateManager()
+
+    def __str__(self):
+        return self.crate
 

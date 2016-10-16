@@ -1,3 +1,8 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import Crate, StoreReader, TagTracker
+
+admin.site.register(Crate)
+admin.site.register(StoreReader)
+admin.site.register(TagTracker)
+
