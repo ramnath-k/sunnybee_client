@@ -20,9 +20,13 @@ class TagTrackerManager(models.Manager):
         same_location = reader == prev_tag.reader
         if same_location:
           time_diff = found_time - prev_tag.updated_time
-          if time_diff > WAIT_TIME:
+          try:
+              wait_time = WaitTime.objects.all()[0].wait_time
+          except IndexError:
+              wait_time = WAIT_TIME
+          if time_diff > wait_time:
             # print 'Toggling status in same reader'
-            self.create_tag_tracker(tag_id, antenna, reader, 
+            self.create_tag_tracker(tag_id, antenna, reader,
                 1 - prev_tag.status, found_time, found_time)
           else:
             # print 'Updating time in same reader'
@@ -30,11 +34,11 @@ class TagTrackerManager(models.Manager):
             prev_tag.save()
         else:
             # print 'Creating record for new reader for existing tag'
-            self.create_tag_tracker(tag_id, antenna, reader, 
+            self.create_tag_tracker(tag_id, antenna, reader,
                 self.model.STATUS_IN, found_time, found_time)
       else:
             # print 'Creating record for new reader for new tag'
-            self.create_tag_tracker(tag_id, antenna, reader, 
+            self.create_tag_tracker(tag_id, antenna, reader,
                 self.model.STATUS_IN, found_time, found_time)
 
     def create_tag_tracker(self, tag_id, antenna, reader, status, created_time=None, updated_time=None):
@@ -155,4 +159,12 @@ class Crate(models.Model):
 
     def __str__(self):
         return self.crate
+
+class WaitTime(models.Model):
+    wait_time = models.IntegerField(null=False)
+    created_time = models.DateTimeField(null=False)
+    updated_time = models.DateTimeField(null=False)
+
+    def __str__(self):
+        return str(self.wait_time)
 
