@@ -22,6 +22,7 @@ class TagTrackerManager(models.Manager):
           time_diff = found_time - prev_tag.updated_time
           try:
               wait_time = WaitTime.objects.all()[0].wait_time
+              wait_time = timedelta(seconds=wait_time, minutes=0)
           except IndexError:
               wait_time = WAIT_TIME
           if time_diff > wait_time:
